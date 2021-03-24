@@ -41,6 +41,9 @@ public class RadioCharts {
 
 
         }
+        if (songs.isEmpty()) {
+            return "";
+        }
         return songs.get(1).toString();
     }
 

@@ -26,7 +26,7 @@ public class RadioCharts {
 
     public String getMostPlayedSong() {
         List<Song> songs = new ArrayList<>();
-        String SQL = "SELECT artist, song FROM music_broadcast GROUP BY artist ORDER BY COUNT (times_aired) DESC LIMIT 1;";
+        String SQL = "SELECT artist, song FROM music_broadcast GROUP BY artist, song ORDER BY COUNT (times_aired) DESC LIMIT 1;";
 
         try (Connection connection = getConnection()) {
             ResultSet resultSet = connection.createStatement().executeQuery(SQL);
@@ -38,25 +38,31 @@ public class RadioCharts {
             }
         } catch (SQLException throwable) {
             throwable.printStackTrace();
-
-
         }
         if (songs.isEmpty()) {
             return "";
         }
-        return songs.get(1).toString();
+        return songs.get(0).toString();
     }
 
     public String getMostActiveArtist() {
-        List<Song> songs = new ArrayList<>();
-        String SQL = "SELECT artist, song FROM music_broadcast GROUP BY artist ORDER BY COUNT (times_aired) DESC LIMIT 1;";
+        List<Song> artist = new ArrayList<>();
+        String SQL = "SELECT artist, song FROM music_broadcast GROUP BY artist, song ORDER BY COUNT (artist) DESC LIMIT 1;";
 
         try (Connection connection = getConnection()) {
             ResultSet resultSet = connection.createStatement().executeQuery(SQL);
+            while (resultSet.next()) {
+                String title = resultSet.getString(1);
+                Integer timesAired = resultSet.getInt(2);
+                artist.add(new Song(title, timesAired));
+            }
         } catch (SQLException throwable) {
             throwable.printStackTrace();
 
         }
-        return "";
+        if (artist.isEmpty()) {
+            return "";
+        }
+        return artist.get(0).toString();
     }
 }
